@@ -2,31 +2,152 @@
 
 #TODO: Check if file overwrites an existing file.
 
-import PyPDF2, os
-
-#Get the PDF filenames.
-pdfFiles = []
-for filename in os.listdir('.'):
-    if filename.endswith('.pdf'):
-        pdfFiles.append(filename)
-pdfFiles.sort(key=str.lower)
-
-pdfWriter = PyPDF2.PdfFileWriter()
-
-#Loop through all the PDF files.
-for filename in pdfFiles:
-    pdfFileObj = open(filename, 'rb')
-    pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-    #Loop through all pages besides the first and add them.
-    #Note that the counting starts at 0, so starting at 1 ignores first page.
-    for pageNum in range(1, pdfReader.numPages):
-        pageObj = pdfReader.getPage(pageNum)
-        pdfWriter.addPage(pageObj)
-
-#Save the resulting PDF to a file.
-pdfOutput = open('allPDF.pdf', 'wb')
-pdfWriter.write(pdfOutput)
-pdfOutput.close()
-
-#Further ideas: cut out specific pages from PDFs, reorder pages in a PDF, create PDF from
+#Further ideas: XXcut out specific pages from PDFs, XXreorder pages in a PDF, Xcreate PDF from
 #only those pages with specific text, identified by extractText().
+
+#Regex search idea in chapter 8.
+
+
+def combine():
+    import PyPDF2, os
+
+    #Get the PDF filenames.
+    pdfFiles = []
+    for filename in os.listdir('.'):
+        if filename.endswith('.pdf'):
+            pdfFiles.append(filename)
+    pdfFiles.sort(key=str.lower)
+
+    pdfWriter = PyPDF2.PdfFileWriter()
+
+    #Loop through all the PDF files.
+    for filename in pdfFiles:
+        pdfFileObj = open(filename, 'rb')
+        pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+        #Loop through all pages besides the first and add them.
+        #Note that the counting starts at 0, so starting at 1 ignores first page.
+        for pageNum in range(0, pdfReader.numPages):
+            pageObj = pdfReader.getPage(pageNum)
+            pdfWriter.addPage(pageObj)
+
+    #Save the resulting PDF to a file.
+    pdfOutput = open('allPDF.pdf', 'wb')
+    pdfWriter.write(pdfOutput)
+    pdfOutput.close()
+
+def cutout():
+    import PyPDF2, os
+    #Cut out pages from PDFs:
+
+    #Get the PDF filenames.
+    pdfFiles = []
+    for filename in os.listdir('.'):
+        if filename.endswith('.pdf'):
+            pdfFiles.append(filename)
+    pdfFiles.sort(key=str.lower)
+
+    good = False
+    while good != True:
+        cutStart = input("What is the start page to remove?")
+        cutEnd = input("What is the end page to remove?")
+        if type(cutStart) == int and type(cutEnd) == int:
+            good = True
+
+    pdfWriter = PyPDF2.PdfFileWriter()
+
+    #Loop through all the PDF files.
+    for filename in pdfFiles:
+        pdfFileObj = open(filename, 'rb')
+        pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+        #Loop through all pages besides the first and add them.
+        #Note that the counting starts at 0, so starting at 1 ignores first page.
+        
+        #Getting from start to beginning of removed pages
+        for pageNum in range(0, cutStart):
+            pageObj = pdfReader.getPage(pageNum)
+            pdfWriter.addPage(pageObj)        
+
+        #From end of removed pages to end of file
+        for pageNum in range(cutEnd+1, pdfReader.numPages):
+            pageObj = pdfReader.getPage(pageNum)
+            pdfWriter.addPage(pageObj)
+
+    #Save the resulting PDF to a file.
+    pdfOutput = open('allPDF.pdf', 'wb')
+    pdfWriter.write(pdfOutput)
+    pdfOutput.close()
+
+def reorder():
+    #Reordering pages in a PDF
+
+    import PyPDF2, os
+
+    first, last = input("Enter first and last numbers to rearrange. ").split()
+    destination = input("What page should they be inserted before?")
+
+    #Get the PDF filenames.
+    pdfFiles = []
+    for filename in os.listdir('.'):
+        if filename.endswith('.pdf'):
+            pdfFiles.append(filename)
+    pdfFiles.sort(key=str.lower)
+
+    pdfWriter = PyPDF2.PdfFileWriter()
+
+    #Loop through all the PDF files.
+    for filename in pdfFiles:
+        pdfFileObj = open(filename, 'rb')
+        pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+        #Loop through all pages and add them.
+
+        #Part before rearrange
+        for pageNum in range(0, first):
+            pageObj = pdfReader.getPage(pageNum)
+            pdfWriter.addPage(pageObj)
+
+        #Rearranged part
+        for pageNum in range(first, last+1):
+            pageObj = pdfReader.getPage(pageNum)
+            pdfWriter.addPage(pageObj)
+
+        #Part after rearrange
+        for pageNum in range(destination, pdfReader.numPages):
+            pageObj = pdfReader.getPage(pageNum)
+            pdfWriter.addPage(pageObj)
+
+    #Save the resulting PDF to a file.
+    pdfOutput = open('allPDF.pdf', 'wb')
+    pdfWriter.write(pdfOutput)
+    pdfOutput.close()
+
+def specificText():
+    #create a PDF from only those pages with specific text, identified by extractText().
+    import PyPDF2, os
+
+    specific = input("What text should the PDFs filter for?" )
+
+    #Get the PDF filenames.
+    pdfFiles = []
+    for filename in os.listdir('.'):
+        if filename.endswith('.pdf'):
+            pdfFiles.append(filename)
+    pdfFiles.sort(key=str.lower)
+
+    pdfWriter = PyPDF2.PdfFileWriter()
+
+    #Loop through all the PDF files.
+    for filename in pdfFiles:
+        pdfFileObj = open(filename, 'rb')
+        pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+        #Loop through all pages besides the first and add them.
+        #Note that the counting starts at 0, so starting at 1 ignores first page.
+        for pageNum in range(0, pdfReader.numPages):
+            pageObj = pdfReader.getPage(pageNum)
+            #Checking for the phrase, adding it to the PDF if found
+            if specific in pageObj.extractText():
+                pdfWriter.addPage(pageObj)
+
+    #Save the resulting PDF to a file.
+    pdfOutput = open('allPDF.pdf', 'wb')
+    pdfWriter.write(pdfOutput)
+    pdfOutput.close()
