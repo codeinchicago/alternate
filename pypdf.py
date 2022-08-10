@@ -82,4 +82,6 @@
 # minutesFile.close()
 # resultPdfFile.close()
 
-print("Test.")
+#print("Test.")
+
+#Project: Combining select pages from many PDFs.
