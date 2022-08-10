@@ -2,8 +2,7 @@
 
 #TODO: Check if file overwrites an existing file.
 
-#Further ideas: XXcut out specific pages from PDFs, XXreorder pages in a PDF, Xcreate PDF from
-#only those pages with specific text, identified by extractText().
+#Further ideas: XXcut out specific pages from PDFs, XXreorder pages in a PDF, XXcreate PDF from only those pages with specific text, identified by extractText().
 
 #Regex search idea in chapter 8.
 
@@ -31,7 +30,7 @@ def combine():
             pdfWriter.addPage(pageObj)
 
     #Save the resulting PDF to a file.
-    pdfOutput = open('allPDF.pdf', 'wb')
+    pdfOutput = open('allPDF3.pdf', 'wb')
     pdfWriter.write(pdfOutput)
     pdfOutput.close()
 
@@ -47,11 +46,11 @@ def cutout():
     pdfFiles.sort(key=str.lower)
 
     good = False
-    while good != True:
-        cutStart = input("What is the start page to remove?")
-        cutEnd = input("What is the end page to remove?")
-        if type(cutStart) == int and type(cutEnd) == int:
-            good = True
+
+    cutStart = int(input("What is the start page to remove? "))
+    cutEnd = int(input("What is the end page to remove? "))
+    # if type(cutStart) == int and type(cutEnd) == int:
+    #     good = True
 
     pdfWriter = PyPDF2.PdfFileWriter()
 
@@ -68,7 +67,7 @@ def cutout():
             pdfWriter.addPage(pageObj)        
 
         #From end of removed pages to end of file
-        for pageNum in range(cutEnd+1, pdfReader.numPages):
+        for pageNum in range(cutEnd-1, pdfReader.numPages):
             pageObj = pdfReader.getPage(pageNum)
             pdfWriter.addPage(pageObj)
 
@@ -82,8 +81,8 @@ def reorder():
 
     import PyPDF2, os
 
-    first, last = input("Enter first and last numbers to rearrange. ").split()
-    destination = input("What page should they be inserted before?")
+    first, last = int(input("Enter first and last numbers to rearrange. ")).split()
+    destination = int(input("What page should they be inserted before? "))
 
     #Get the PDF filenames.
     pdfFiles = []
@@ -106,12 +105,12 @@ def reorder():
             pdfWriter.addPage(pageObj)
 
         #Rearranged part
-        for pageNum in range(first, last+1):
+        for pageNum in range(first-1, last+1):
             pageObj = pdfReader.getPage(pageNum)
             pdfWriter.addPage(pageObj)
 
         #Part after rearrange
-        for pageNum in range(destination, pdfReader.numPages):
+        for pageNum in range(destination-1, pdfReader.numPages):
             pageObj = pdfReader.getPage(pageNum)
             pdfWriter.addPage(pageObj)
 
@@ -124,7 +123,7 @@ def specificText():
     #create a PDF from only those pages with specific text, identified by extractText().
     import PyPDF2, os
 
-    specific = input("What text should the PDFs filter for?" )
+    specific = input("What text should the PDFs filter for? ")
 
     #Get the PDF filenames.
     pdfFiles = []
@@ -151,3 +150,15 @@ def specificText():
     pdfOutput = open('allPDF.pdf', 'wb')
     pdfWriter.write(pdfOutput)
     pdfOutput.close()
+
+print("Welcome to the PDF manipulator.")
+print("Would you like to 1.Combine PDFs\n2.Cut out pages from PDFs.\n3.Rearrange pages\n4.Filter PDFs based on text.")
+choice = input("Enter the number of your choice. ")
+if int(choice) == 1:
+    combine()
+if int(choice) == 2:
+    cutout()
+if int(choice) == 3:
+    reorder()
+if int(choice) == 4:
+    specificText()
